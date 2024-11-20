@@ -7,9 +7,11 @@ import { Link, router } from "expo-router";
 import OAuth from "@/components/OAuth";
 import { useSignUp } from "@clerk/clerk-expo";
 import { ReactNativeModal } from "react-native-modal";
+import { fetchAPI } from "@/lib/fetch";
 
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -56,7 +58,14 @@ const SignUp = () => {
       });
 
       if (completeSignUp.status === "complete") {
-        // TODO: Create a database user!
+        await fetchAPI("/(api)/user", {
+          method: "POST",
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            clerkId: completeSignUp.createdUserId,
+          }),
+        });
 
         await setActive({ session: completeSignUp.createdSessionId });
         setVerification({ ...verification, state: "success" });
@@ -129,9 +138,9 @@ const SignUp = () => {
 
           <ReactNativeModal
             isVisible={verification.state === "pending"}
-            onModalHide={() =>
-              setVerification({ ...verification, state: "success" })
-            }
+            onModalHide={() => {
+              if (verification.state === "success") setShowSuccessModal(true);
+            }}
           >
             <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
               <Text className="text-2xl font-JakartaExtraBold mb-2">
@@ -167,7 +176,7 @@ const SignUp = () => {
             </View>
           </ReactNativeModal>
 
-          <ReactNativeModal isVisible={verification.state === "success"}>
+          <ReactNativeModal isVisible={showSuccessModal}>
             <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
               <Image
                 source={images.check}
@@ -184,7 +193,10 @@ const SignUp = () => {
 
               <CustomButton
                 title="Browse Home"
-                onPress={() => router.replace("/(root)/(tabs)/home")}
+                onPress={() => {
+                  setShowSuccessModal(false);
+                  router.push("/(root)/(tabs)/home");
+                }}
                 className="mt-5"
               />
             </View>
