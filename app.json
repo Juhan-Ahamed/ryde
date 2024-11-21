@@ -32,7 +32,7 @@
         {
           "origin": "https://uber.com/"
         }
-      ],
+      ]
     ],
     "experiments": {
       "typedRoutes": true

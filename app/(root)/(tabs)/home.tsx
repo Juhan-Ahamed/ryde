@@ -15,6 +15,8 @@ import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import { useLocationStore } from "@/store";
 import { useEffect, useState } from "react";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+const googlePlacesApiKey = process.env.EXPO_PUBLIC_GOOGLE_API_KEY;
 
 const recentRides = [
   {
@@ -204,12 +206,11 @@ export default function Page() {
               </TouchableOpacity>
             </View>
 
-            {/*<GoogleTextInput*/}
-            {/*  icon={icons.search}*/}
-            {/*  containerStyle="bg-white shadow-md shadow-neutral-300"*/}
-            {/*  handlePress={handleDestinationPress}*/}
-            {/*/>*/}
-
+            <GoogleTextInput
+              icon={icons.search}
+              containerStyle="bg-white shadow-md shadow-neutral-300"
+              handlePress={handleDestinationPress}
+            />
             <>
               <Text className="text-xl font-JakartaBold mt-5 mb-3">
                 Your Current Location
@@ -219,6 +220,10 @@ export default function Page() {
                 <Map />
               </View>
             </>
+
+            <Text className="text-xl font-JakartaBold mt-5 mb-3">
+              Recent Rides
+            </Text>
           </>
         )}
       />
